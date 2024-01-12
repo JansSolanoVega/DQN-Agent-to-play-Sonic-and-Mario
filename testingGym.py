@@ -1,6 +1,6 @@
 import retro
 
-env = retro.make("SonicTheHedgehog-Genesis", "LabyrinthZone.Act1")
+env = retro.make(game="SonicTheHedgehog-Genesis", state="LabyrinthZone.Act1")
 
 env.reset()
 
