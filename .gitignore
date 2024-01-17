@@ -1,6 +1,6 @@
-# Byte-compiled / optimized / DLL files
+#Cache
 __pycache__/
-*.py[cod]
 
+#Folders
 retro-SonicTheHedgehog/
 venv38/
