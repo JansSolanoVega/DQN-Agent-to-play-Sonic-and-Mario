@@ -9,3 +9,4 @@ torch==2.1.2
 torchvision==0.16.2
 tensordict==0.2.0
 torchrl==0.2.0
+tensorboard==2.14.0
