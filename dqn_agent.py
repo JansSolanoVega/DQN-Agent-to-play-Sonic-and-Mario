@@ -76,7 +76,7 @@ class SonicAgent:
         self.optimizer.step()
         return loss.item()
 
-    def update_weights_target(self):#Update weights of target network periodically
+    def update_weights_target(self):#Update target network weights periodically using online network weights
         self.net.target.load_state_dict(self.net.online.state_dict())
     
     def learn(self):
