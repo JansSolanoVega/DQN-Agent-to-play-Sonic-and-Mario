@@ -1,5 +1,5 @@
 import torch.nn as nn
-class SonicNet:
+class SonicNet(nn.Module):
     def __init__(self, input_dim, output_dim):
         super().__init__()
         c, _, _ = input_dim

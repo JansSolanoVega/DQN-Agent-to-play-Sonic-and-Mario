@@ -2,39 +2,42 @@
 import torch
 import numpy as np
 from utils import *
-from tensordict import TensorDict
-from torchrl.data import TensorDictReplayBuffer, LazyMemmapStorage
 from network import SonicNet
+from collections import deque
+import random
 
 class SonicAgent:
-    def __init__(self, exploration_rate, discount_factor, loss_fn, optimizer, double_dqn=True):
+    def __init__(self, observation_size, action_size, exploration_rate, discount_factor, double_dqn=True):
         #General
-        self.memory = TensorDictReplayBuffer(storage=LazyMemmapStorage(100000, device=torch.device("cpu")))
+        self.memory = deque(maxlen=100000)
         self.batch_size = 64
         self.step = 0
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
         #DQN params
         self.double_dqn = double_dqn
         self.gamma = discount_factor
         self.epsilon = exploration_rate
         self.epsilon_min = 0.1
-        self.epsilon_decay = 0.999
+        self.epsilon_decay = 0.99999975
         
         self.update_target_from_online_every = 1e4
         self.update_online_every = 4
-        self.start_learning_after = 1e4
+        self.start_learning_after = 1e2#1e4
 
         #NN
-        self.loss_fn = loss_fn
-        self.optimizer = optimizer
-        self.net = SonicNet()
+        self.loss_fn = torch.nn.SmoothL1Loss()
+        self.net = SonicNet(observation_size, action_size)
+        self.net = self.net.to(self.device)
+        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=0.00025)
 
     def act(self, state):
         if np.random.randn() < self.epsilon:
             action_idx = np.random.randint(0, len(POSSIBLE_ACTIONS))#exploration
         else:
-            state_action_values = self.sonicNet(state)#NN outputs Q(s,a) values for all actions from state s
-            action_idx = np.argmax(state_action_values)#exploitation
+            state = torch.tensor(state.__array__(), device=self.device).unsqueeze(0)
+            state_action_values = self.net(state, model="online")#NN outputs Q(s,a) values for all actions from state s
+            action_idx = torch.argmax(state_action_values[0]).item()#exploitation
         
         #GLIE:
         self.epsilon *= self.epsilon_decay
@@ -44,30 +47,30 @@ class SonicAgent:
         return action_idx
     
     def append_experience_to_memory(self, state, next_state, action, reward, done):
-        state = torch.tensor(state)
-        next_state = torch.tensor(next_state)
-        action = torch.tensor([action])
-        reward = torch.tensor([reward])
-        done = torch.tensor([done])
+        state = torch.tensor(state.__array__(), device=self.device)
+        next_state = torch.tensor(next_state.__array__(), device=self.device)
+        action = torch.tensor([action], device=self.device)
+        reward = torch.tensor([reward], device=self.device)
+        done = torch.tensor([done], device=self.device)
 
-        self.memory.add(TensorDict({"state": state, "next_state": next_state, "action": action, "reward": reward, "done": done}))
+        self.memory.append((state, next_state, action, reward, done, ))
 
     def sample_experience_from_memory(self):
-        batch = self.memory.sample(self.batch_size).to(self.device)
-        state, next_state, action, reward, done = (batch.get(key) for key in ("state", "next_state", "action", "reward", "done"))
+        batch = random.sample(self.memory, self.batch_size)
+        state, next_state, action, reward, done = map(torch.stack, zip(*batch))
         return state, next_state, action.squeeze(), reward.squeeze(), done.squeeze()
 
     def estimate(self, state, action):
-        return self.net(state, "online")[action]
+        return self.net(state, "online")[np.arange(0, self.batch_size), action]
     
     @torch.no_grad()
     def target(self, next_state, reward):
         if self.double_dqn:
-            greedy_policy_action = torch.argmax(self.net(next_state, "online"))
+            greedy_policy_action = torch.argmax(self.net(next_state, "online"), axis=1)
         else:
-            greedy_policy_action = torch.argmax(self.net(next_state, "target"))
+            greedy_policy_action = torch.argmax(self.net(next_state, "target"), axis=1)
         
-        return reward + self.gamma*self.net(next_state, "target")[greedy_policy_action] 
+        return reward + self.gamma*self.net(next_state, "target")[np.arange(0, self.batch_size), greedy_policy_action] 
 
     def update_weights_online(self, estimate, target):#Gradient descent
         loss = self.loss_fn(estimate, target)
