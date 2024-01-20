@@ -9,8 +9,9 @@ class DataLogger:
         self.loss_accum = 0
     
     def add(self, loss, step):
-        self.loss_accum += loss
-        self.writer.add_scalar('training loss', float(self.loss_accum), step)
+        if loss:
+            self.loss_accum += loss
+            self.writer.add_scalar('training loss', float(self.loss_accum), step)
     
     def close(self):
         self.writer.close()
