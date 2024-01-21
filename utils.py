@@ -4,6 +4,7 @@ import retro
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT, RIGHT_ONLY, COMPLEX_MOVEMENT
 from nes_py.wrappers import JoypadSpace
 import matplotlib.pyplot as plt
+import os
 
 MAPPING_ACTION_SPACE_MARIO ={
     "SIMPLE_MOVEMENT": SIMPLE_MOVEMENT,
@@ -53,6 +54,14 @@ def get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="COMPLEX_M
         return env
     else:
         return None
+    
+def get_env_name(env): 
+    try:
+        return env.spec.id
+    except:
+        if (env.gamename=="SonicTheHedgehog-Genesis"):
+            return env.gamename
+        return None
 
 def get_action(index, env): 
     try:
@@ -85,4 +94,6 @@ def plot_sequence_observations(next_state):
         ax.imshow(next_state[i]) #Converting to matplotlib format
         ax.set_title(f"Frame {i+1}")
 
-
+def create_folder_path(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
