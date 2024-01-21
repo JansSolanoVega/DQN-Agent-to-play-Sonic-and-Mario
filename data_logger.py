@@ -56,7 +56,7 @@ class DataLogger:
             torch.save(self.agent.net.state_dict(), save_path)
             print(f"Model saved to {save_path} at step {self.time_step_count}")
 
-            self.writer.add_scalar('exploration_rate', float(self.agent.epsilon), self.time_step)
+            self.writer.add_scalar('exploration_rate', float(self.agent.epsilon), self.time_step_count)
         
         self.time_step_count += 1
 
