@@ -1,21 +1,21 @@
-import retro
 from utils import *
 import numpy as np
+from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
+from gym.utils import play
 
-env = retro.make(game="SonicTheHedgehog-Genesis", state="LabyrinthZone.Act1")
+env = get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="SIMPLE_MOVEMENT")
+# (game="sonic", level="GreenHillZone.Act1")
+
 env.reset()
 
-done = False
-
-while not done:
+while True:
     env.render()
 
-    action = POSSIBLE_ACTIONS[np.random.randint(0, len(POSSIBLE_ACTIONS))]
+    action_index = np.random.randint(0, get_action_space_size(env))
 
-    ob, rew, done, info = env.step(action)
+    ob, rew, done, info = env.step(get_action(action_index, env))
     
-    print(f"{ob.shape},{rew},{done},{info}")
+    print(rew)
 
-
-
-    
+    if done:
+        break
