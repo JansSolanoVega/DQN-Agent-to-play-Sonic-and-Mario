@@ -7,33 +7,33 @@ from collections import deque
 import random
 
 class Agent:
-    def __init__(self, env, observation_size, action_size, exploration_rate, discount_factor, double_dqn=True):
+    def __init__(self, env, batch_size, learning_rate, observation_size, action_size, exploration_rate, discount_factor, model="DDQN", epsilon_min = 0.1, epsilon_decay = 0.99999975):
         #General
         self.memory = deque(maxlen=40000)
-        self.batch_size = 8
+        self.batch_size = batch_size
         self.step = 0
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.env = env
 
         #DQN params
-        self.double_dqn = double_dqn
+        self.double_dqn = (model=="DDQN")
         self.gamma = discount_factor
         self.epsilon = exploration_rate
-        self.epsilon_min = 0.1
-        self.epsilon_decay = 0.99999975
+        self.epsilon_min = epsilon_min
+        self.epsilon_decay = epsilon_decay
         
         self.update_target_from_online_every = 1e4
-        self.update_online_every = 4
-        self.start_learning_after = 1e3#1e4
+        self.update_online_every = 3
+        self.start_learning_after = 5e4
 
         #NN
         self.loss_fn = torch.nn.SmoothL1Loss()
         self.net = Net(observation_size, action_size)
         self.net = self.net.to(self.device)
-        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=0.00025)
+        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=learning_rate)
 
     def act(self, state):
-        if np.random.randn() < self.epsilon:
+        if np.random.randn() <= self.epsilon:
             action_idx = np.random.randint(0, get_action_space_size(self.env))#exploration
         else:
             state = torch.tensor(state.__array__(), device=self.device).unsqueeze(0)
