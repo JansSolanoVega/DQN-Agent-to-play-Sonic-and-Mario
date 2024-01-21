@@ -11,9 +11,7 @@ env.reset()
 while True:
     env.render()
 
-    action_index = np.random.randint(0, get_action_space_size(env))
-
-    ob, rew, done, info = env.step(get_action(action_index, env))
+    ob, rew, done, info = env.step(get_action_sample(env))
     
     print(rew)
 
