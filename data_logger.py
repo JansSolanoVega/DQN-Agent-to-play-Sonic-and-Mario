@@ -48,7 +48,6 @@ class DataLogger:
         self.sum_reward_per_episode = 0.0
     
     def time_step(self, reward, n_time_steps_save_model=10000):
-        self.time_step_count += 1
         self.average_reward_per_n_time_steps += reward
         self.sum_reward_per_episode += reward
 
@@ -56,6 +55,10 @@ class DataLogger:
             save_path = os.path.join(self.folder_path_models, f"{self.time_step_count}.pth")
             torch.save(self.agent.net.state_dict(), save_path)
             print(f"Model saved to {save_path} at step {self.time_step_count}")
+
+            self.writer.add_scalar('exploration_rate', float(self.agent.epsilon), self.time_step)
+        
+        self.time_step_count += 1
 
     def close(self):
         self.writer.close()
