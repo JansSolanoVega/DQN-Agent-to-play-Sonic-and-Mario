@@ -5,7 +5,12 @@
 python -m retro.import games/
 ```
 
-## To test the game:
+## To test sonic game:
 ```sh
-python -m retro.examples.interactive --game SonicTheHedgehog-Genesis --state LabyrinthZone.Act1
+python -m retro.examples.interactive --game SonicTheHedgehog-Genesis --state GreenHillZone.Act1
+```
+
+## To test mario game:
+```sh
+python -m test_games.mario_play --game SuperMarioBros-v0 --state COMPLEX_MOVEMENT
 ```
