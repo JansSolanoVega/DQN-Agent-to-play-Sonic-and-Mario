@@ -37,7 +37,7 @@ class DataLogger:
             self.sum_win_per_n_episodes = 0.0
         
         if self.sum_reward_per_episode > self.best_episode_reward:
-            save_path = os.path.join(self.folder_path_models, "best_model.chkpt")
+            save_path = os.path.join(self.folder_path_models, "best_model.pth")
             torch.save(self.agent.net.state_dict(), save_path)
             print(f"Best model saved to {save_path} at episode {self.episode}")
             self.best_episode_reward = self.sum_reward_per_episode
@@ -53,7 +53,7 @@ class DataLogger:
         self.sum_reward_per_episode += reward
 
         if self.time_step_count % n_time_steps_save_model == 0:
-            save_path = os.path.join(self.folder_path_models, f"{self.time_step_count}.chkpt")
+            save_path = os.path.join(self.folder_path_models, f"{self.time_step_count}.pth")
             torch.save(self.agent.net.state_dict(), save_path)
             print(f"Model saved to {save_path} at step {self.time_step_count}")
 
