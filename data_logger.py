@@ -53,7 +53,7 @@ class DataLogger:
 
         if self.time_step_count % n_time_steps_save_model == 0:
             save_path = os.path.join(self.folder_path_models, f"{self.time_step_count}.pth")
-            torch.save(self.agent.net.state_dict(), save_path)
+            torch.save({"model": self.agent.net.state_dict(), "exploration_rate": self.agent.epsilon}, save_path)
             print(f"Model saved to {save_path} at step {self.time_step_count}")
 
             self.writer.add_scalar('exploration_rate', float(self.agent.epsilon), self.time_step_count)
