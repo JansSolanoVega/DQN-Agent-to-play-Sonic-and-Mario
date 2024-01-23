@@ -38,7 +38,7 @@ class DataLogger:
         
         if self.sum_reward_per_episode > self.best_episode_reward:
             save_path = os.path.join(self.folder_path_models, "best_model.pth")
-            torch.save(self.agent.net.state_dict(), save_path)
+            torch.save({"model": self.agent.net.state_dict(), "exploration_rate": self.agent.epsilon}, save_path)
             print(f"Best model saved to {save_path} at episode {self.episode}")
             self.best_episode_reward = self.sum_reward_per_episode
 
