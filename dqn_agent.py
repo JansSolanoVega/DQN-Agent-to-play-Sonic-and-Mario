@@ -65,13 +65,13 @@ class Agent:
         return self.net(state, "online")[np.arange(0, self.batch_size), action]
     
     @torch.no_grad()
-    def target(self, next_state, reward):
+    def target(self, next_state, reward, done):
         if self.double_dqn:
             greedy_policy_action = torch.argmax(self.net(next_state, "online"), axis=1)
         else:
             greedy_policy_action = torch.argmax(self.net(next_state, "target"), axis=1)
         
-        return reward + self.gamma*self.net(next_state, "target")[np.arange(0, self.batch_size), greedy_policy_action] 
+        return reward + (1-done.float())*self.gamma*self.net(next_state, "target")[np.arange(0, self.batch_size), greedy_policy_action] #In DQN last product is a max basically
 
     def update_weights_online(self, estimate, target):#Gradient descent
         loss = self.loss_fn(estimate, target)
@@ -84,12 +84,23 @@ class Agent:
         self.net.target.load_state_dict(self.net.online.state_dict())
     
     def learn(self):
-        if self.step < self.start_learning_after or self.step % self.update_online_every!=0:
-            return None
         if self.step % self.update_target_from_online_every==0:
             self.update_weights_target()
+        if self.step < self.start_learning_after or self.step % self.update_online_every!=0:
+            return None
         state, next_state, action, reward, done = self.sample_experience_from_memory()
         estimate = self.estimate(state, action)
-        target = self.target(next_state, reward)
+        target = self.target(next_state, reward, done)
         loss = self.update_weights_online(estimate, target)
         return loss
+
+    def load(self, path):
+        loaded_agent = torch.load(path)
+        exploration_rate = loaded_agent.get("exploration_rate")
+        state_dict = loaded_agent.get("model")
+        
+        print(f"Loading model at {path} with exploration rate {exploration_rate}")
+        
+        self.net.load_state_dict(state_dict)
+        self.epsilon = exploration_rate
+        
