@@ -1,0 +1,24 @@
+environment:
+  game: 'mario'
+  level: 'SuperMarioBros-1-1-v0'
+  action_space: 'SIMPLE_MOVEMENT'
+  skip: 4 
+  gray_scale: True
+  frame_shape: (84, 84)
+  num_stack: 4
+
+hyperparameters:
+  dqn/ddqn:
+    model: "DDQN"
+    episodes: 15000
+
+    batch_size: 32 #TUNED
+    learning_rate: 0.00025 #TUNED
+    exploration_rate_initial: 1
+    discount_factor: 0.99
+    epsilon_min: 0.1
+    epsilon_decay: 0.99999975
+
+logging:
+  n_time_steps_save_model: 10000
+  n_episodes_average: 3
