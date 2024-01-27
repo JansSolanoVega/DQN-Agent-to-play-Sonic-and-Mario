@@ -5,13 +5,14 @@ import torch
 from datetime import datetime
 
 class DataLogger:
-    def __init__(self, env, agent, model="DDQN"):
+    def __init__(self, env, agent=None, model=None):
         name_logging = datetime.now().strftime('%Y%m%d%H%M%S')
-        folder_path_train = os.path.join("logs", get_env_name(env), model, name_logging,"train")
+        self.folder_path_train = os.path.join("logs", get_env_name(env), model, name_logging,"train")
         self.folder_path_models = os.path.join("logs", get_env_name(env), model, name_logging, "checkpoints")
-        create_folder_path(folder_path_train); create_folder_path(self.folder_path_models)
+        create_folder_path(self.folder_path_train); create_folder_path(self.folder_path_models)
         
-        self.writer = SummaryWriter(folder_path_train)
+        if agent is not None:
+            self.writer = SummaryWriter(self.folder_path_train)
         
         #Per episodes
         self.sum_reward_per_episode = 0.0
