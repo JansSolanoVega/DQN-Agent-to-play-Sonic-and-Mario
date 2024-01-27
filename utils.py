@@ -5,6 +5,7 @@ from gym_super_mario_bros.actions import SIMPLE_MOVEMENT, RIGHT_ONLY, COMPLEX_MO
 from nes_py.wrappers import JoypadSpace
 import matplotlib.pyplot as plt
 import os
+import yaml
 
 MAPPING_ACTION_SPACE_MARIO ={
     "SIMPLE_MOVEMENT": SIMPLE_MOVEMENT,
@@ -97,3 +98,13 @@ def plot_sequence_observations(next_state):
 def create_folder_path(folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
+
+def get_params():
+    with open("params.yaml", "r") as file:
+        params = yaml.safe_load(file)
+    return params["environment"], params["logging"], params["hyperparameters"]
+
+def save_hyperparameters(hp_dict, path):
+    file_path = os.path.join(path, "hyperparameters.yaml")
+    with open(file_path, "w") as file:
+        yaml.dump(hp_dict, file, default_flow_style=False)
