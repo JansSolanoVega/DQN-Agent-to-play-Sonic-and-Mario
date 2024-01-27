@@ -2,23 +2,32 @@ environment:
   game: 'mario'
   level: 'SuperMarioBros-1-1-v0'
   action_space: 'SIMPLE_MOVEMENT'
-  skip: 4 
+  skip: 8
   gray_scale: True
-  frame_shape: (84, 84)
+  frame_shape:
+    - 84
+    - 84 
   num_stack: 4
 
 hyperparameters:
   dqn/ddqn:
-    model: "DDQN"
-    episodes: 15000
+    model: 'DDQN'
+    #batch_size: 32 #TUNED
+    batch_size: 192 #TUNED
+    buffer_size: 100000 #TUNED
+    learning_starts: 10000 #TUNED
+    discount_factor: 0.99 #TUNED
+    exploration_fraction: 0.1 #TUNED
 
-    batch_size: 32 #TUNED
-    learning_rate: 0.00025 #TUNED
-    exploration_rate_initial: 1
-    discount_factor: 0.99
-    epsilon_min: 0.1
-    epsilon_decay: 0.99999975
+    learning_rate: 0.0001    
+    exploration_final_eps: 0.1
+    train_freq: 8
+    #train_freq: 4
+    target_update_interval: 100000
+    
+    #time_steps: 2000000
+    time_steps: 4000000
 
 logging:
-  n_time_steps_save_model: 10000
-  n_episodes_average: 3
+  n_time_steps_save_model: 25000
+  evaluate_best_model_every: 250000
