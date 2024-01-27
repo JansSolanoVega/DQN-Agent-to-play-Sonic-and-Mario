@@ -2,7 +2,7 @@ environment:
   game: 'mario'
   level: 'SuperMarioBros-1-1-v0'
   action_space: 'SIMPLE_MOVEMENT'
-  skip: 8
+  skip: 4
   gray_scale: True
   frame_shape:
     - 84
@@ -24,9 +24,13 @@ hyperparameters:
     train_freq: 8
     #train_freq: 4
     target_update_interval: 100000
-    
     #time_steps: 2000000
     time_steps: 4000000
+  
+  ppo:
+    model: 'PPO'
+    learning_rate: 0.00003  
+    time_steps: 3000000
 
 logging:
   n_time_steps_save_model: 25000
