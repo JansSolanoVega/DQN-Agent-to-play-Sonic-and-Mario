@@ -3,6 +3,7 @@ import os
 from utils import *
 import torch
 from datetime import datetime
+import pickle
 
 class DataLogger:
     def __init__(self, env, hp, agent=None, model=None):
@@ -27,10 +28,16 @@ class DataLogger:
 
         self.agent = agent
 
+        #Save
+        self.total_rewards = []
+        self.wins = []
+
     def episode_step(self, info):
         self.episode += 1
-        
         self.win_per_episode += float(info["flag_get"])
+        
+        self.total_rewards.append(self.sum_reward_per_episode)
+        self.wins.append(self.win_per_episode)
 
         self.writer.add_scalar('mean_rew', float(self.sum_reward_per_episode), self.episode)
         self.writer.add_scalar('win_rate', float(self.win_per_episode), self.episode)
@@ -61,4 +68,9 @@ class DataLogger:
         self.time_step_count += 1
 
     def close(self):
+        with open(os.path.join(self.folder_path_train, "total_rewards"), "wb") as f:
+            pickle.dump(self.total_rewards, f)
+        with open(os.path.join(self.folder_path_train, "total_wins"), "wb") as f:
+            pickle.dump(self.wins, f)
+        
         self.writer.close()
