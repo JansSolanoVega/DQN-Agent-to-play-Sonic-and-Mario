@@ -6,6 +6,7 @@ from nes_py.wrappers import JoypadSpace
 import matplotlib.pyplot as plt
 import os
 import yaml
+from stable_baselines3.common.atari_wrappers import MaxAndSkipEnv
 
 MAPPING_ACTION_SPACE_MARIO ={
     "SIMPLE_MOVEMENT": SIMPLE_MOVEMENT,
@@ -34,15 +35,29 @@ POSSIBLE_ACTIONS_SONIC = {
 
 MAP_IDS_TO_NAME_SONIC = ["None", "Left", "Right", "Left, Down", "Right, Down", "Down", "Down, B", "B"]
 
-def apply_wrappers(env, skip=4, gray_scale = True, shape=(156, 156), num_stack=4):
-    if skip:
-        env = SkipFrame(env, skip=skip)
-    if gray_scale:
-        env = GrayScaleObservation(env)
-    if shape:
-        env = ResizeObservation(env, shape=shape)
+def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], num_stack=4, buffer=True):
+    if skip=="max_and_skip":
+        env = MaxAndSkipEnv(env, 4) #Returns only ith frame, same action for i frames, observation returned is the maxpooling over last 2 frames
+    else:
+        if skip:
+            env = SkipFrame(env, skip=skip)
+
+    if shape==[84, 84]:
+        env = ProcessFrame84(env)
+    else:
+        if gray_scale:
+            env = GrayScaleObservation(env)
+        if shape:
+            env = ResizeObservation(env, shape=shape)
+
     if num_stack:
-        env = FrameStack(env, num_stack=num_stack)
+        if buffer: #Instead of returning each step 4 new 
+            env = ImageToPyTorch(env)
+            env = BufferWrapper(env, 4)
+        else:
+            env = FrameStack(env, num_stack=num_stack)
+    
+    env = ScaledFloatFrame(env)
     return env
 
 def get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="COMPLEX_MOVEMENT"):
