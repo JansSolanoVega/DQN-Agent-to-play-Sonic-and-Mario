@@ -5,11 +5,12 @@ from utils import *
 from network import Net
 from collections import deque
 import random
+from utils import *
 
 class Agent:
-    def __init__(self, env, batch_size, learning_rate, observation_size, action_size, exploration_rate, discount_factor, model="DDQN", epsilon_min = 0.1, epsilon_decay = 0.99999975):
+    def __init__(self, env, batch_size, buffer_size, learning_rate, observation_size, action_size, discount_factor, model, epsilon_min, epsilon_decay, update_online_every, update_target_from_online_every, start_learning_after):
         #General
-        self.memory = deque(maxlen=40000)
+        self.memory = deque(maxlen=buffer_size)
         self.batch_size = batch_size
         self.step = 0
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -18,13 +19,13 @@ class Agent:
         #DQN params
         self.double_dqn = (model=="DDQN")
         self.gamma = discount_factor
-        self.epsilon = exploration_rate
+        self.epsilon = 1.0
         self.epsilon_min = epsilon_min
         self.epsilon_decay = epsilon_decay
         
-        self.update_target_from_online_every = 1e4
-        self.update_online_every = 3
-        self.start_learning_after = 5e4
+        self.update_target_from_online_every = update_target_from_online_every
+        self.update_online_every = update_online_every
+        self.start_learning_after = start_learning_after
 
         #NN
         self.loss_fn = torch.nn.SmoothL1Loss()
