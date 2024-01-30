@@ -18,7 +18,7 @@ hyperparameters:
     learning_starts: 1000 #TUNED
     discount_factor: 0.90 #TUNED
     learning_rate: 0.00025
-    train_freq: 3
+    train_freq: 1
     target_update_interval: 5000
     
     #Own implementation
