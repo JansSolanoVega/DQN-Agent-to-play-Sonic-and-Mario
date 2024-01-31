@@ -44,7 +44,7 @@ class Agent:
         #GLIE:
         if self.step < self.decay_steps:
         # Linear decay
-            self.epsilon -= (1.0 - self.epsilon_min) * self.step / self.decay_steps
+            self.epsilon = 1.0 - (1.0 - self.epsilon_min) * self.step / self.decay_steps
         else:
             self.epsilon = self.epsilon_min
 
