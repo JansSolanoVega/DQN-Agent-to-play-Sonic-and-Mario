@@ -8,7 +8,6 @@ environment:
     - 84
     - 84
   num_stack: 4
-  buffer: False
 
 hyperparameters:
   dqn/ddqn:
