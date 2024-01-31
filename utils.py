@@ -53,7 +53,7 @@ def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], 
     if num_stack:
         env = FrameStack(env, num_stack=num_stack)
 
-    if not library:
+    if not library:#CnnPolicy from SB3 already computes normalization, and input should be from 0 to 255
         env = ScaledFloatFrame(env)
     return env
 

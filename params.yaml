@@ -12,7 +12,7 @@ environment:
 
 hyperparameters:
   dqn/ddqn:
-    library: False
+    library: True
     model: 'DDQN'
     
     batch_size: 32 #TUNED
