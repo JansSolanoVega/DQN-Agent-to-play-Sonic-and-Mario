@@ -29,7 +29,7 @@ hyperparameters:
     # SB
     exploration_fraction: 0.05 #TUNED
     exploration_final_eps: 0.02
-    time_steps: 2000 #000
+    time_steps: 2000000
   
   ppo:
     model: 'PPO'
