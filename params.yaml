@@ -12,21 +12,17 @@ environment:
 
 hyperparameters:
   dqn/ddqn:
+    library: False
     model: 'DDQN'
+    
     batch_size: 32 #TUNED
     buffer_size: 30000 #TUNED
     learning_starts: 1000 #TUNED
     discount_factor: 0.90 #TUNED
     learning_rate: 0.00025
     train_freq: 1
-    target_update_interval: 5000
-    
-    # #Own implementation
-    # num_episodes: 10000
-    # exploration_decay: 0.99
-    # exploration_min: 0.02
+    target_update_interval: 5000    
 
-    # SB
     exploration_fraction: 0.05 #TUNED
     exploration_final_eps: 0.02
     time_steps: 2000000

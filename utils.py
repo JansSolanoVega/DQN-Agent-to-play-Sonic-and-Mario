@@ -35,7 +35,7 @@ POSSIBLE_ACTIONS_SONIC = {
 
 MAP_IDS_TO_NAME_SONIC = ["None", "Left", "Right", "Left, Down", "Right, Down", "Down", "Down, B", "B"]
 
-def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], num_stack=4, buffer=True):
+def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], num_stack=4, library=True):
     if skip=="max_and_skip":
         env = MaxAndSkipEnv(env, 4) #Returns only ith frame, same action for i frames, observation returned is the maxpooling over last 2 frames
     else:
@@ -51,12 +51,10 @@ def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], 
             env = ResizeObservation(env, shape=shape)
 
     if num_stack:
-        if buffer: #Instead of returning each step 4 new 
-            env = ImageToPyTorch(env)
-            env = BufferWrapper(env, 4)
-        else:
-            env = FrameStack(env, num_stack=num_stack)
-    
+        env = FrameStack(env, num_stack=num_stack)
+
+    if not library:
+        env = ScaledFloatFrame(env)
     return env
 
 def get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="COMPLEX_MOVEMENT"):
