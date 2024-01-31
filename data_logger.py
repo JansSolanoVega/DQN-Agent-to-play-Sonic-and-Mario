@@ -73,4 +73,5 @@ class DataLogger:
         with open(os.path.join(self.folder_path_train, "total_wins"), "wb") as f:
             pickle.dump(self.wins, f)
         
-        self.writer.close()
+        if self.agent is not None:
+            self.writer.close()

@@ -57,7 +57,6 @@ def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], 
         else:
             env = FrameStack(env, num_stack=num_stack)
     
-    env = ScaledFloatFrame(env)
     return env
 
 def get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="COMPLEX_MOVEMENT"):

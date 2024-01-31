@@ -14,6 +14,7 @@ class Net(nn.Module):
             p.requires_grad = False
 
     def forward(self, input, model):
+        input = input.float() / 255.0
         if model == "online":
             return self.online(input)
         elif model == "target":

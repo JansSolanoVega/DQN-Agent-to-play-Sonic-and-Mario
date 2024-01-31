@@ -8,7 +8,7 @@ import random
 from utils import *
 
 class Agent:
-    def __init__(self, env, batch_size, buffer_size, learning_rate, observation_size, action_size, discount_factor, model, epsilon_min, epsilon_decay, update_online_every, update_target_from_online_every, start_learning_after):
+    def __init__(self, env, batch_size, time_steps, buffer_size, learning_rate, observation_size, action_size, discount_factor, model, epsilon_min, exploration_fraction, update_online_every, update_target_from_online_every, start_learning_after):
         #General
         self.memory = deque(maxlen=buffer_size)
         self.batch_size = batch_size
@@ -21,7 +21,7 @@ class Agent:
         self.gamma = discount_factor
         self.epsilon = 1.0
         self.epsilon_min = epsilon_min
-        self.epsilon_decay = epsilon_decay
+        self.decay_steps = exploration_fraction*time_steps
         
         self.update_target_from_online_every = update_target_from_online_every
         self.update_online_every = update_online_every
@@ -42,8 +42,14 @@ class Agent:
             action_idx = torch.argmax(state_action_values[0]).item()#exploitation
         
         #GLIE:
-        self.epsilon *= self.epsilon_decay
-        self.epsilon = max(self.epsilon_min, self.epsilon)
+        if self.step < self.decay_steps:
+        # Linear decay
+            self.epsilon -= (1.0 - self.epsilon_min) * self.step / self.decay_steps
+        else:
+            self.epsilon = self.epsilon_min
+
+        # self.epsilon *= self.epsilon_decay
+        # self.epsilon = max(self.epsilon_min, self.epsilon)
 
         self.step += 1
         return action_idx
