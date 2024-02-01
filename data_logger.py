@@ -9,6 +9,7 @@ class DataLogger:
     def __init__(self, env, hp, agent=None, model=None, name_logging=None):
         if not name_logging:
             name_logging = datetime.now().strftime('%Y%m%d%H%M%S')
+        self.gamename = get_env_name(env)
         self.folder_path_train = os.path.join("logs", get_env_name(env), model, name_logging,"train")
         self.folder_path_models = os.path.join("logs", get_env_name(env), model, name_logging, "checkpoints")
         create_folder_path(self.folder_path_train); create_folder_path(self.folder_path_models)
@@ -34,9 +35,13 @@ class DataLogger:
         self.wins = []
 
     def episode_step(self, info):
+        if self.gamename=="SuperMarioBros-1-1-v0":
+            self.win_per_episode += float(info["flag_get"])
+        elif self.gamename=="SonicTheHedgehog-Genesis":
+            self.win_per_episode += float(info["lives"]==info["prev_lives"])
+
         self.episode += 1
-        self.win_per_episode += float(info["flag_get"])
-        
+            
         self.total_rewards.append(self.sum_reward_per_episode)
         self.wins.append(self.win_per_episode)
 

@@ -1,4 +1,4 @@
-from gym.wrappers import FrameStack
+from gym.wrappers import FrameStack, TimeLimit
 from wrappers import *
 import retro
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT, RIGHT_ONLY, COMPLEX_MOVEMENT
@@ -59,6 +59,7 @@ def get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="COMPLEX_M
     if game=="sonic":
         env = retro.make(game="SonicTheHedgehog-Genesis", state=level, scenario='contest')
         env = SonicActionSpace(env, POSSIBLE_ACTIONS_SONIC)
+        env = TimeLimit(env, max_episode_steps=30000)
         return env
     elif game=="mario":
         env = gym.make(level)
