@@ -7,7 +7,7 @@ python -m retro.import games/
 
 ## To test sonic game:
 ```sh
-python -m retro.examples.interactive --game SonicTheHedgehog-Genesis --state GreenHillZone.Act1
+python -m retro.examples.interactive --game SonicTheHedgehog-Genesis --state GreenHillZone.Act1 --scenario contest
 ```
 
 ## To test mario game:

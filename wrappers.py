@@ -21,6 +21,16 @@ class SkipFrame(gym.Wrapper):#Not every frame is relevant, we can skip some of t
                 break
         return obs, total_reward, done, info
 
+class SonicActionSpace(gym.Wrapper):
+    def __init__(self, env, actions):
+        super().__init__(env)
+        self.actions = actions
+        self.n_actions = len(actions)
+        self.action_space = gym.spaces.Discrete(self.n_actions)
+
+    def step(self, action):
+        return self.env.step(self.actions[action])
+
 class GrayScaleObservation(gym.ObservationWrapper):
     def __init__(self, env):
         super().__init__(env)
@@ -48,7 +58,7 @@ class ResizeObservation(gym.ObservationWrapper):
 
     def observation(self, observation):
         transforms = T.Compose(
-            [T.Resize(self.shape, antialias=True), T.Normalize(0, 255)]
+            [T.Resize(self.shape, antialias=True)]#, T.Normalize(0, 255)]
         )
         observation = transforms(observation).squeeze(0)
         return observation
@@ -69,17 +79,18 @@ class ProcessFrame84(gym.ObservationWrapper):
 
     @staticmethod
     def process(frame):
-        if frame.size == 240 * 256 * 3:
+        if frame.size == 240 * 256 * 3:#mario
             img = np.reshape(frame, [240, 256, 3]).astype(np.float32)
+            img = img[:, :, 0] * 0.299 + img[:, :, 1] * 0.587 + img[:, :, 2] * 0.114
+            resized_screen = cv2.resize(img, (84, 110), interpolation=cv2.INTER_AREA)
+            x_t = resized_screen[18:102, :]
+            x_t = np.reshape(x_t, [84, 84])
+        elif frame.size == 224 * 320 * 3:#sonic
+            img = np.reshape(frame, [224, 320, 3]).astype(np.float32)
+            img = img[:, :, 0] * 0.299 + img[:, :, 1] * 0.587 + img[:, :, 2] * 0.114
+            resized_screen = cv2.resize(img, (84, 95), interpolation=cv2.INTER_AREA)
+            x_t = resized_screen[0:84, :]
+            x_t = np.reshape(x_t, [84, 84])
         else:
             assert False, "Unknown resolution."
-        img = img[:, :, 0] * 0.299 + img[:, :, 1] * 0.587 + img[:, :, 2] * 0.114
-        resized_screen = cv2.resize(img, (84, 110), interpolation=cv2.INTER_AREA)
-        x_t = resized_screen[18:102, :]
-        x_t = np.reshape(x_t, [84, 84])
         return x_t.astype(np.uint8)
-    
-class ScaledFloatFrame(gym.ObservationWrapper):
-    """Normalize pixel values in frame --> 0 to 1"""
-    def observation(self, obs):
-        return np.array(obs).astype(np.float32) / 255.0

@@ -1,7 +1,7 @@
 environment:
-  game: 'mario'
-  level: 'SuperMarioBros-1-1-v0'
-  action_space: 'RIGHT_ONLY'
+  game: 'sonic'
+  level: 'GreenHillZone.Act1'
+  action_space: None
   skip: 'max_and_skip'
   gray_scale: True
   frame_shape:
@@ -11,7 +11,6 @@ environment:
 
 hyperparameters:
   dqn/ddqn:
-    library: True
     model: 'DDQN'
     
     batch_size: 32 #TUNED
@@ -33,4 +32,4 @@ hyperparameters:
 
 logging:
   n_time_steps_save_model: 25000
-  evaluate_best_model_every: 250000
+  evaluate_best_model_every: 25000

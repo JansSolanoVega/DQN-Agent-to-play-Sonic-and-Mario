@@ -6,8 +6,9 @@ from datetime import datetime
 import pickle
 
 class DataLogger:
-    def __init__(self, env, hp, agent=None, model=None):
-        name_logging = datetime.now().strftime('%Y%m%d%H%M%S')
+    def __init__(self, env, hp, agent=None, model=None, name_logging=None):
+        if not name_logging:
+            name_logging = datetime.now().strftime('%Y%m%d%H%M%S')
         self.folder_path_train = os.path.join("logs", get_env_name(env), model, name_logging,"train")
         self.folder_path_models = os.path.join("logs", get_env_name(env), model, name_logging, "checkpoints")
         create_folder_path(self.folder_path_train); create_folder_path(self.folder_path_models)

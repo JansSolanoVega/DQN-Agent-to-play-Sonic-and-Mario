@@ -35,7 +35,7 @@ POSSIBLE_ACTIONS_SONIC = {
 
 MAP_IDS_TO_NAME_SONIC = ["None", "Left", "Right", "Left, Down", "Right, Down", "Down", "Down, B", "B"]
 
-def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], num_stack=4, library=True):
+def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], num_stack=4):
     if skip=="max_and_skip":
         env = MaxAndSkipEnv(env, 4) #Returns only ith frame, same action for i frames, observation returned is the maxpooling over last 2 frames
     else:
@@ -53,13 +53,12 @@ def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], 
     if num_stack:
         env = FrameStack(env, num_stack=num_stack)
 
-    if not library:#CnnPolicy from SB3 already computes normalization, and input should be from 0 to 255
-        env = ScaledFloatFrame(env)
     return env
 
 def get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="COMPLEX_MOVEMENT"):
     if game=="sonic":
-        env = retro.make(game="SonicTheHedgehog-Genesis", state=level)
+        env = retro.make(game="SonicTheHedgehog-Genesis", state=level, scenario='contest')
+        env = SonicActionSpace(env, POSSIBLE_ACTIONS_SONIC)
         return env
     elif game=="mario":
         env = gym.make(level)
@@ -82,17 +81,11 @@ def get_action(index, env):
             return index
     except:
         if (env.gamename=="SonicTheHedgehog-Genesis"):
-            return POSSIBLE_ACTIONS_SONIC[index]
+            return index
         return None
 
 def get_action_space_size(env): 
-    try:
-        if (env.spec.id=="SuperMarioBros-1-1-v0"):        
-            return env.action_space.n
-    except:
-        if (env.gamename=="SonicTheHedgehog-Genesis"):
-            return len(POSSIBLE_ACTIONS_SONIC)
-        return None
+    return env.action_space.n
     
 def get_action_sample(env):
     action_index = np.random.randint(0, get_action_space_size(env))
