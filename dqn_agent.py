@@ -2,7 +2,7 @@
 import torch
 import numpy as np
 from utils import *
-from network import Net
+from network import Net, MarioNet
 from collections import deque
 import random
 from utils import *
@@ -29,7 +29,7 @@ class Agent:
 
         #NN
         self.loss_fn = torch.nn.SmoothL1Loss()
-        self.net = Net(observation_size, action_size)
+        self.net = MarioNet(observation_size, action_size)
         self.net = self.net.to(self.device)
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=learning_rate)
 
@@ -72,7 +72,7 @@ class Agent:
         return self.net(state, "online")[np.arange(0, self.batch_size), action]
     
     @torch.no_grad()
-    def target(self, next_state, reward, done):
+    def target(self, next_state, reward, done):    
         if self.double_dqn:
             greedy_policy_action = torch.argmax(self.net(next_state, "online"), axis=1)
         else:
@@ -99,6 +99,7 @@ class Agent:
         estimate = self.estimate(state, action)
         target = self.target(next_state, reward, done)
         loss = self.update_weights_online(estimate, target)
+        #print(estimate.mean().item())
         return loss
 
     def load(self, path):

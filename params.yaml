@@ -1,8 +1,8 @@
 environment:
-  game: 'sonic'
-  level: 'GreenHillZone.Act1'
-  action_space: None
-  skip: 'max_and_skip'
+  game: 'mario' #'sonic'
+  level: 'SuperMarioBros-1-1-v0' #'GreenHillZone.Act1'
+  action_space: 'RIGHT_ONLY' #None  
+  skip: True #'max_and_skip'
   gray_scale: True
   frame_shape:
     - 84

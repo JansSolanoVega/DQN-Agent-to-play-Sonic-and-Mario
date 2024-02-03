@@ -1,4 +1,4 @@
-from gym.wrappers import FrameStack, TimeLimit
+from gym.wrappers import FrameStack, TimeLimit, TransformObservation
 from wrappers import *
 import retro
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT, RIGHT_ONLY, COMPLEX_MOVEMENT
@@ -49,7 +49,7 @@ def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], 
             env = GrayScaleObservation(env)
         if shape:
             env = ResizeObservation(env, shape=shape)
-
+        env = TransformObservation(env, f=lambda x: x / 255.)
     if num_stack:
         env = FrameStack(env, num_stack=num_stack)
 
