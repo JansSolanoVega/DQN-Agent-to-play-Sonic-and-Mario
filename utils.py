@@ -50,6 +50,7 @@ def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], 
         if shape:
             env = ResizeObservation(env, shape=shape)
         env = TransformObservation(env, f=lambda x: x / 255.)
+
     if num_stack:
         env = FrameStack(env, num_stack=num_stack)
 
@@ -59,7 +60,7 @@ def get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="COMPLEX_M
     if game=="sonic":
         env = retro.make(game="SonicTheHedgehog-Genesis", state=level, scenario='contest')
         env = SonicActionSpace(env, POSSIBLE_ACTIONS_SONIC)
-        env = TimeLimit(env, max_episode_steps=30000)
+        env = TimeLimit(env, max_episode_steps=20000)
         return env
     elif game=="mario":
         env = gym.make(level)
@@ -105,8 +106,8 @@ def create_folder_path(folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-def get_params():
-    with open("params.yaml", "r") as file:
+def get_params(gamename="mario"):
+    with open(os.path.join("params", gamename+"_params.yaml"), "r") as file:
         params = yaml.safe_load(file)
     return params["environment"], params["logging"], params["hyperparameters"]
 

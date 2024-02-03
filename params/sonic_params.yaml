@@ -1,0 +1,35 @@
+environment:
+  game: 'sonic'
+  level: 'GreenHillZone.Act1'
+  action_space: None  
+  skip: 'max_and_skip'
+  gray_scale: True
+  frame_shape:
+    - 84
+    - 84
+  num_stack: 4
+
+hyperparameters:
+  dqn/ddqn:
+    model: 'DDQN'
+    
+    batch_size: 32 #TUNED
+    buffer_size: 30000 #TUNED
+    learning_starts: 1000 #TUNED
+    discount_factor: 0.90 #TUNED
+    learning_rate: 0.00025
+    train_freq: 1
+    target_update_interval: 5000    
+
+    exploration_fraction: 0.10 #TUNED
+    exploration_final_eps: 0.02
+    time_steps: 4000000
+  
+  ppo:
+    model: 'PPO'
+    learning_rate: 0.00003  
+    time_steps: 3000000
+
+logging:
+  n_time_steps_save_model: 25000
+  evaluate_best_model_every: 25000
