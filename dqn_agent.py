@@ -2,7 +2,7 @@
 import torch
 import numpy as np
 from utils import *
-from network import Net, MarioNet
+from network import Net
 from collections import deque
 import random
 from utils import *
@@ -29,15 +29,15 @@ class Agent:
 
         #NN
         self.loss_fn = torch.nn.SmoothL1Loss()
-        self.net = MarioNet(observation_size, action_size)
+        self.net = Net(observation_size, action_size).float()
         self.net = self.net.to(self.device)
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=learning_rate)
 
     def act(self, state):
-        if np.random.randn() <= self.epsilon:
+        if np.random.randn() < self.epsilon:
             action_idx = np.random.randint(0, get_action_space_size(self.env))#exploration
         else:
-            state = torch.tensor(state.__array__(), device=self.device).unsqueeze(0)
+            state = torch.FloatTensor(state).cuda().unsqueeze(0)
             state_action_values = self.net(state, model="online")#NN outputs Q(s,a) values for all actions from state s
             action_idx = torch.argmax(state_action_values[0]).item()#exploitation
         
@@ -48,20 +48,17 @@ class Agent:
         else:
             self.epsilon = self.epsilon_min
 
-        # self.epsilon *= self.epsilon_decay
-        # self.epsilon = max(self.epsilon_min, self.epsilon)
-
         self.step += 1
         return action_idx
     
     def append_experience_to_memory(self, state, next_state, action, reward, done):
-        state = torch.tensor(state.__array__(), device=self.device)
-        next_state = torch.tensor(next_state.__array__(), device=self.device)
-        action = torch.tensor([action], device=self.device)
-        reward = torch.tensor([reward], device=self.device)
-        done = torch.tensor([done], device=self.device)
+        state = torch.FloatTensor(state).cuda()
+        next_state = torch.FloatTensor(next_state).cuda()
+        action = torch.LongTensor([action]).cuda()
+        reward = torch.DoubleTensor([reward]).cuda()
+        done = torch.BoolTensor([done]).cuda()
 
-        self.memory.append((state, next_state, action, reward, done, ))
+        self.memory.append( (state, next_state, action, reward, done,) )
 
     def sample_experience_from_memory(self):
         batch = random.sample(self.memory, self.batch_size)
@@ -95,11 +92,13 @@ class Agent:
             self.update_weights_target()
         if self.step < self.start_learning_after or self.step % self.update_online_every!=0:
             return None
+        
         state, next_state, action, reward, done = self.sample_experience_from_memory()
         estimate = self.estimate(state, action)
+        
         target = self.target(next_state, reward, done)
         loss = self.update_weights_online(estimate, target)
-        #print(estimate.mean().item())
+        
         return loss
 
     def load(self, path):

@@ -2,7 +2,7 @@ environment:
   game: 'mario' #'sonic'
   level: 'SuperMarioBros-1-1-v0' #'GreenHillZone.Act1'
   action_space: 'RIGHT_ONLY' #None  
-  skip: True #'max_and_skip'
+  skip: 4 #'max_and_skip'
   gray_scale: True
   frame_shape:
     - 84
@@ -14,7 +14,7 @@ hyperparameters:
     model: 'DDQN'
     
     batch_size: 32 #TUNED
-    buffer_size: 30000 #TUNED
+    buffer_size: 20000 #TUNED
     learning_starts: 1000 #TUNED
     discount_factor: 0.90 #TUNED
     learning_rate: 0.00025

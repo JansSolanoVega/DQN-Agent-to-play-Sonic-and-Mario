@@ -1,4 +1,4 @@
-from gym.wrappers import FrameStack, TimeLimit, TransformObservation
+from gym.wrappers import FrameStack, TimeLimit, TransformObservation, GrayScaleObservation
 from wrappers import *
 import retro
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT, RIGHT_ONLY, COMPLEX_MOVEMENT
@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import os
 import yaml
 from stable_baselines3.common.atari_wrappers import MaxAndSkipEnv
+import gym_super_mario_bros
 
 MAPPING_ACTION_SPACE_MARIO ={
     "SIMPLE_MOVEMENT": SIMPLE_MOVEMENT,
@@ -46,14 +47,14 @@ def apply_wrappers(env, skip="max_and_skip", gray_scale = True, shape=[84, 84], 
         env = ProcessFrame84(env)
     else:
         if gray_scale:
-            env = GrayScaleObservation(env)
+            env = GrayScaleObservation(env, keep_dim=False)
         if shape:
-            env = ResizeObservation(env, shape=shape)
+            env = ResizeObservation(env, shape=shape[0])
         env = TransformObservation(env, f=lambda x: x / 255.)
 
     if num_stack:
         env = FrameStack(env, num_stack=num_stack)
-
+    
     return env
 
 def get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="COMPLEX_MOVEMENT"):
@@ -63,7 +64,7 @@ def get_env(game="mario", level="SuperMarioBros-1-1-v0", action_space="COMPLEX_M
         env = TimeLimit(env, max_episode_steps=20000)
         return env
     elif game=="mario":
-        env = gym.make(level)
+        env = gym_super_mario_bros.make(level)
         env = JoypadSpace(env, MAPPING_ACTION_SPACE_MARIO[action_space])
         return env
     else:
