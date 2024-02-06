@@ -6,3 +6,6 @@ retro-SonicTheHedgehog/
 venv38/
 logs/
 results/mario/
+results/sonic/
+results/video_mario/
+results/video_sonic/
