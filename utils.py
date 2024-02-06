@@ -117,9 +117,3 @@ def save_hyperparameters(hp_dict, path):
     with open(file_path, "w") as file:
         yaml.dump(hp_dict, file, default_flow_style=False)
     
-def plot_average_reward(data, title="Episodes trained vs. Average Rewards", n_average=500):
-    plt.title(title)
-    plt.plot([0 for _ in range(n_average)] + 
-            np.convolve(data, np.ones((n_average,))/n_average, mode="valid").tolist())
-    plt.show()
-        
