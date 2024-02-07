@@ -13,8 +13,8 @@ python -m test_games.mario_play --game SuperMarioBros-v0 --state RIGHT_ONLY
 *   Run `./TestingTrainingStableBaselines.ipynb`.
 
 ## To run trained model:
-*   GAME_TO_PLAY: `mario` or `sonic` 
+*   GAME_TO_RUN: `mario` or `sonic` 
 ```sh
-python replay_model.py --game GAME_TO_PLAY
+python replay_model.py --game GAME_TO_RUN
 ```
 
