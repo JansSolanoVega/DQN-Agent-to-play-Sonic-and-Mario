@@ -1,9 +1,9 @@
 # DQN agent to play Sonic The Hedgehog and Super Mario Bros
 
-<p align="left">
-  <img src="results\sonic.gif" width="200">
-  <img src="results\mario.gif" width="200">
-  <i>Trained models</i>
+<p align="center">
+  <i>Trained models</i><br/>
+  <img src="results\sonic.gif" width="200" height="200">
+  <img src="results\mario.gif" width="200" height="200">
 </p>
 
 ## To test games:
