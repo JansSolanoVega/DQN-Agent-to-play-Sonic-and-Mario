@@ -1,4 +1,4 @@
-# RL agent to play Sonic The Hedgehog
+# DQN agent to play Sonic The Hedgehog and Super Mario Bros
 
 ## To test games:
 ```sh
