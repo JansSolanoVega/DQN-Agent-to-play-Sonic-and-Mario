@@ -3,7 +3,6 @@
 <p align="center">
   <i>Trained models</i><br/>
   <img src="results\sonic.gif" width="200" height="200">
-  <i>              </i>
   <img src="results\mario.gif" width="200" height="200">
 </p>
 
