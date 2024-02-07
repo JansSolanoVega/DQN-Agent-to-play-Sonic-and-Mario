@@ -17,7 +17,7 @@ python -m test_games.mario_play --game SuperMarioBros-v0 --state RIGHT_ONLY
 ```
 ## To train a new model:
 *   Change hyperparameters in `params/` folder.
-*   Run `./TestingTrainingStableBaselines.ipynb`.
+*   Run `./TrainingAgent.ipynb`.
 
 ## To run trained model:
 *   GAME_TO_RUN: `mario` or `sonic` 
