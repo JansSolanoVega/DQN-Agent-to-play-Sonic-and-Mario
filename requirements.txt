@@ -12,3 +12,4 @@ stable-baselines3==1.8.0
 tensorboard==2.14.0
 gym-super-mario-bros==7.4.0
 nes-py==8.2.1
+ipykernel==6.19.4
