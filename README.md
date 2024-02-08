@@ -6,7 +6,17 @@
   <img src="results\mario.gif" width="200" height="200">
 </p>
 
-## To test games:
+## Installation:
+*   To add SONIC ROM to retro (Mario game is included in super-mario-bros gym package):
+    ```sh
+    python -m retro.import PATH_TO_SONIC_ROM
+    ```   
+*   Install requirements (Tested on Python 3.8.18): 
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+## To test games rewards:
 
 ```sh
 python -m test_games.sonic_play --game SonicTheHedgehog-Genesis --state GreenHillZone.Act1 --scenario contest
