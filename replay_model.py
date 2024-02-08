@@ -17,18 +17,16 @@ def run_model(game="sonic"):
     env = apply_wrappers(env, skip=ep["skip"], gray_scale=ep["gray_scale"], shape=ep["frame_shape"], num_stack=ep["num_stack"])# Test the model
 
     env = gym.wrappers.RecordVideo(env, 'results/video_'+game)
-    try:
-        while True:
-            obs = env.reset()
-            done = False
-            while not done:
-                action, _ = model.predict(np.array(obs), deterministic=True)
-                #print(action)
-                obs, _, done, _ = env.step(int(action))
-                env.render()
-                time.sleep(0.001)
-    except:
-        env.close()
+    obs = env.reset()
+    done = False
+    while not done:
+        action, _ = model.predict(np.array(obs), deterministic=True)
+        #print(action)
+        obs, _, done, _ = env.step(int(action))
+        env.render()
+        time.sleep(0.001)
+    
+    env.close()
 
 def main():
     parser = argparse.ArgumentParser()
